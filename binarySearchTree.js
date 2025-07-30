@@ -29,7 +29,7 @@ class Tree {
         const mid = Math.floor((start + end) / 2);
         const node = new Node(arr[mid]);
         node.left = this.buildTreeRec(arr, start, mid - 1);
-        node.rigth = this.buildTreeRec(arr, mid + 2, end);
+        node.right = this.buildTreeRec(arr, mid + 1, end);
         return node;
     }
 
@@ -67,7 +67,7 @@ class Tree {
             node.left = this.deleteRec(node.left, value);
             return node;
         } else if (value > node.data) {
-            node.right = this.deleteRec(node.rigth, value);
+            node.right = this.deleteRec(node.right, value);
             return node;
         }
 
@@ -112,7 +112,7 @@ class Tree {
         return null;
     }
 
-    levelOderForEach(callback) {
+    levelOrderForEach(callback) {
         if (typeof callback !== "function") {
             throw new Error("Callback required");
         }
@@ -136,4 +136,116 @@ class Tree {
         }
     }
 
+    inOrderForEach(callback) {
+        if (typeof callback !== "function") {
+            throw new Error("Callback required");
+        }
+        function visit(node) {
+            if (!node) {
+                return;
+            }
+            visit(node.left);
+            callback(node);
+            visit(node.right);
+        }
+        visit(this.root);
+    }
+
+    preOrderForEach(callback) {
+        if (typeof callback !== "function") {
+            throw new Error("Callback required");
+        }
+        function visit(node) {
+            if (!node) {
+                return;
+            }
+            callback(node);
+            visit(node.left);
+            visit(node.right);
+        }
+        visit(this.root);
+    }
+
+    postOrderForEach(callback) {
+        if (typeof callback !== "function") {
+            throw new Error("Callback required");
+        }
+        function visit(node) {
+            if (!node) {
+                return;
+            }
+            visit(node.left);
+            visit(node.right);
+            callback(node);
+        }
+        visit(this.root);
+    }
+
+    height(value) {
+        const node = this.find(value);
+        if (!node) {
+            return null;
+        }
+        return this.height2(node);
+    }
+
+    _height(node) {
+        if (!node) {
+            return -1;
+        }
+        return 1 + Math.max(this._height(node.left), this._height(node.right));
+    }
+
+    depth(value) {
+        let curr = this.root;
+        let depth = 0;
+        while (curr) {
+            if (value === curr.data) {
+                return depth;
+            }
+            curr = value < curr.data ? curr.left : curr.right;
+            depth++;
+        }
+        return null;
+    }
+
+    balanced() {
+        return this.isBalanced(this.root);
+    }
+
+    isBalanced(node) {
+        if (!node) {
+            return true;
+        }
+
+        const lh = this.height(node.left);
+        const rh = this.height(node.right);
+
+        if (Math.abs(lh - rh) > 1) {
+            return false;
+        }
+
+        return this.isBalanced(node.left) && this.isBalanced(node.right);
+    }
+
+    rebalance() {
+        const values = [];
+        this.inOrderForEach(node => values.push(node.data));
+        this.root = this.buildTree(values);
+    }
 }
+
+function prettyPrint(node, prefix = '', isLeft = true) {
+  if (node === null) {
+    return;
+  }
+  if (node.right !== null) {
+    prettyPrint(node.right, `${prefix}${isLeft ? '│   ' : '    '}`, false);
+  }
+  console.log(`${prefix}${isLeft ? '└── ' : '┌── '}${node.data}`);
+  if (node.left !== null) {
+    prettyPrint(node.left, `${prefix}${isLeft ? '    ' : '│   '}`, true);
+  }
+}
+
+module.exports = { Node, Tree, prettyPrint };
