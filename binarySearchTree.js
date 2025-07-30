@@ -34,6 +34,23 @@ class Tree {
     }
 
     insert(value) {
+        this.root = this.insertRec(this.root, value);
+    }
 
+    insertRec(node, value) {
+        if (!node) {
+            return new Node(value);
+        }
+
+        if (value === node.data) {
+            return node;
+        }
+
+        if (value < node.data) {
+            node.left = this.insertRec(node.left, value);
+        } else {
+            node.right = this.insertRec(node.right, value);
+        }
+        return node;
     }
 }
