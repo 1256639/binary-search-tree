@@ -99,4 +99,41 @@ class Tree {
         node.data = succ.data;
         return node;
     }
+
+    find(value) {
+        let curr = this.root;
+        while (curr) {
+            if (value === curr.data) {
+                return curr;
+            }
+
+            curr = value < curr.data ? curr.left : curr.right; 
+        }
+        return null;
+    }
+
+    levelOderForEach(callback) {
+        if (typeof callback !== "function") {
+            throw new Error("Callback required");
+        }
+
+        const queue = [];
+        if (this.root) {
+            queue.push(this.root);
+        }
+
+        while (queue.length) {
+            const node = queue.shift();
+            callback(node);
+
+            if (node.left) {
+                queue.push(node.left);
+            }
+
+            if (node.right) {
+                queue.push(node.right);
+            }
+        }
+    }
+
 }
