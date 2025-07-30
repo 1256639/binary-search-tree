@@ -53,4 +53,50 @@ class Tree {
         }
         return node;
     }
+
+    deleteItem(value) {
+        this.root = this.deleteRec(this.root, value);
+    }
+
+    deleteRec(node, value) {
+        if (!node) {
+            return null;
+        }
+
+        if (value < node.data) {
+            node.left = this.deleteRec(node.left, value);
+            return node;
+        } else if (value > node.data) {
+            node.right = this.deleteRec(node.rigth, value);
+            return node;
+        }
+
+        if (!node.left && !node.right) {
+            return null;
+        }
+
+        if (!node.left) {
+            return node.right;
+        }
+
+        if (!node.right) {
+            return node.left;
+        }
+
+        let succParent = node;
+        let succ = node.right;
+        while (succ.left) {
+            succParent = succ;
+            succ = succ.left;
+        }
+
+        if (succParent !== node) {
+            succParent.left = succ.right;
+        } else {
+            succParent.right = succ.right;
+        }
+
+        node.data = succ.data;
+        return node;
+    }
 }
